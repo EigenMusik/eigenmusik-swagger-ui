@@ -82,7 +82,7 @@
 .swagger-section pre .vhdl .attribute,
 .swagger-section pre .clojure .attribute,
 .swagger-section pre .coffeescript .property {
-  color: #8888ff;
+  color: #88F;
 }
 .swagger-section pre .keyword,
 .swagger-section pre .id,
@@ -1239,7 +1239,8 @@
   padding: 14px;
 }
 .swagger-section #input_baseUrl {
-  width: 400px;
+  border: 5px;
+  height: 27px;
 }
 .swagger-section #api_selector {
   display: block;
@@ -1257,7 +1258,7 @@
   padding: 3px;
   margin: 0;
 }
-.swagger-section #input_apiKey {
+.swagger-section #input_token {
   width: 200px;
 }
 .swagger-section #explore {

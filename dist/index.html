@@ -32,12 +32,7 @@
 
   <script type="text/javascript">
     $(function () {
-      var url = window.location.search.match(/url=([^&]+)/);
-      if (url && url.length > 1) {
-        url = decodeURIComponent(url[1]);
-      } else {
-        url = "http://petstore.swagger.io/v2/swagger.json";
-      }
+      var url = "http://api.eigenmusik.com/v2/api-docs";
 
       // Pre load translate...
       if(window.SwaggerTranslator) {
@@ -48,22 +43,11 @@
         dom_id: "swagger-ui-container",
         supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
         onComplete: function(swaggerApi, swaggerUi){
-          if(typeof initOAuth == "function") {
-            initOAuth({
-              clientId: "your-client-id",
-              clientSecret: "your-client-secret-if-required",
-              realm: "your-realms",
-              appName: "your-app-name",
-              scopeSeparator: ",",
-              additionalQueryStringParams: {}
-            });
-          }
-
           if(window.SwaggerTranslator) {
             window.SwaggerTranslator.translate();
           }
 
-          addApiKeyAuthorization();
+          addTokenAuthorization();
         },
         onFailure: function(data) {
           log("Unable to Load SwaggerUI");
@@ -75,22 +59,16 @@
         showRequestHeaders: false
       });
 
-      function addApiKeyAuthorization(){
-        var key = encodeURIComponent($('#input_apiKey')[0].value);
-        if(key && key.trim() != "") {
-            var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("api_key", key, "query");
-            window.swaggerUi.api.clientAuthorizations.add("api_key", apiKeyAuth);
-            log("added key " + key);
+      // @note Hacked this in to use token based auth with Swagger.
+      function addTokenAuthorization(){
+        var token = encodeURIComponent( $('#input_token')[0].value );
+        if(token && token.trim() != "") {
+            var tokenAuth = new SwaggerClient.ApiKeyAuthorization( "Authorization", "Bearer " + token, "header" );
+            window.swaggerUi.api.clientAuthorizations.add( "bearer", tokenAuth );
         }
       }
 
-      $('#input_apiKey').change(addApiKeyAuthorization);
-
-      // if you have an apiKey you would like to pre-populate on the page for demonstration purposes...
-      /*
-        var apiKey = "myApiKeyXXXX123456789";
-        $('#input_apiKey').val(apiKey);
-      */
+      $('#input_token').change(addTokenAuthorization);
 
       window.swaggerUi.load();
 
@@ -108,8 +86,13 @@
   <div class="swagger-ui-wrap">
     <a id="logo" href="http://swagger.io">swagger</a>
     <form id='api_selector'>
-      <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/></div>
-      <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
+      <div class='input'>
+      <select id="input_baseUrl" name="baseUrl" >
+        <option value="http://localhost:7070/v2/api-docs">Dev</option>
+        <option value="http://api.eigenmusik.com/v2/api-docs">Pro</option>
+      </select>
+      </div>
+      <div class='input'><input placeholder="bearer_token" id="input_token" name="token" type="text"/></div>
       <div class='input'><a id="explore" href="#" data-sw-translate>Explore</a></div>
     </form>
   </div>
